@@ -1,11 +1,5 @@
-//
-// based on LiquidCrystal library from ArduinoIDE, see http://arduino.cc
-//  modified 27 Jul 2011
-// by Ilya V. Danilov http://mk90.ru/
-// 
-
-#ifndef LiquidCrystalRus_h
-#define LiquidCrystalRus_h
+#ifndef LiquidCrystal_h
+#define LiquidCrystal_h
 
 #include <inttypes.h>
 #include "Print.h"
@@ -48,22 +42,17 @@
 #define LCD_5x10DOTS 0x04
 #define LCD_5x8DOTS 0x00
 
-// enum for 
-#define LCD_DRAM_Normal 0x00
-#define LCD_DRAM_WH1601 0x01
-
-
-class LiquidCrystalRus : public Print {
+class LiquidCrystal : public Print {
 public:
-  LiquidCrystalRus(uint8_t rs, uint8_t enable,
+  LiquidCrystal(uint8_t rs, uint8_t enable,
 		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
 		uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7);
-  LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+  LiquidCrystal(uint8_t rs, uint8_t rw, uint8_t enable,
 		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3,
 		uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7);
-  LiquidCrystalRus(uint8_t rs, uint8_t rw, uint8_t enable,
+  LiquidCrystal(uint8_t rs, uint8_t rw, uint8_t enable,
 		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3);
-  LiquidCrystalRus(uint8_t rs, uint8_t enable,
+  LiquidCrystal(uint8_t rs, uint8_t enable,
 		uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3);
 
   void init(uint8_t fourbitmode, uint8_t rs, uint8_t rw, uint8_t enable,
@@ -88,25 +77,17 @@ public:
   void autoscroll();
   void noAutoscroll();
 
+  void setRowOffsets(int row1, int row2, int row3, int row4);
   void createChar(uint8_t, uint8_t[]);
-  void setCursor(uint8_t, uint8_t);
- 
-#if defined(ARDUINO) && ARDUINO >= 100
+  void setCursor(uint8_t, uint8_t); 
   virtual size_t write(uint8_t);
-  using Print::write;
-#else
-  virtual void write(uint8_t);
-#endif
-
   void command(uint8_t);
-
-  void setDRAMModel(uint8_t);
-
+  
+  using Print::write;
 private:
   void send(uint8_t, uint8_t);
-  void writeNbits(uint8_t, uint8_t);
-  uint8_t recv(uint8_t);
-  uint8_t readNbits(uint8_t); 
+  void write4bits(uint8_t);
+  void write8bits(uint8_t);
   void pulseEnable();
 
   uint8_t _rs_pin; // LOW: command.  HIGH: character.
@@ -120,10 +101,8 @@ private:
 
   uint8_t _initialized;
 
-  uint8_t _numlines,_currline;
-
-  uint8_t _dram_model;
-  uint8_t utf_hi_char; // UTF-8 high part
+  uint8_t _numlines;
+  uint8_t _row_offsets[4];
 };
 
 #endif
